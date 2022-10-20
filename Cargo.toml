@@ -1,0 +1,14 @@
+[package]
+name = "dumpster"
+version = "0.1.0"
+edition = "2021"
+authors = ["J. Brock <joseph.brock@canonical.com>"]
+description = "Find files in other files"
+
+[dependencies]
+anyhow = "1.0.65"
+clap = { version = "4.0.17", features = ["derive"] }
+
+[profile.release]
+strip = true
+lto = true
