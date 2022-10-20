@@ -3,7 +3,7 @@ name = "dumpster"
 version = "0.1.0"
 edition = "2021"
 authors = ["J. Brock <joseph.brock@canonical.com>"]
-description = "Find files in other files"
+description = "Rummage through bins"
 
 [dependencies]
 anyhow = "1.0.65"
