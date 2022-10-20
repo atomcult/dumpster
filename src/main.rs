@@ -1,7 +1,7 @@
 use std::io::prelude::*;
 use std::io::BufReader;
 use std::fs::File;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use clap::Parser;
 use anyhow::{Context, Result};
@@ -47,7 +47,7 @@ struct Source {
 
 
 impl Source {
-    pub fn new(path: PathBuf) -> Result<Self> {
+    pub fn new(path: &Path) -> Result<Self> {
         let f = File::open(&path).with_context(|| {
             format!("Could not open file: `{}`", &path.display())
         })?;
@@ -101,12 +101,16 @@ fn main() -> Result<()> {
     let args = Args::parse();
 
     let f = File::open(&args.target)
-        .with_context(|| format!("Could not open file {}.", &args.target.display()))?;
+        .with_context(|| format!("Could not open file: {}", &args.target.display()))?;
     let target = BufReader::new(f);
 
-    let mut sources: Vec<Source> = args.sources.into_iter().map(|path| {
-        Source::new(path).unwrap_or_else(|err| panic!("{}", err))
-    }).collect();
+    let mut sources = Vec::new();
+    for path in args.sources {
+        let src = Source::new(&path).with_context(|| {
+            format!("Could not open file: {}", &path.display())
+        })?;
+        sources.push(src);
+    }
 
     for (offset, byte) in target.bytes().enumerate() {
         if let Ok(byte) = byte {
